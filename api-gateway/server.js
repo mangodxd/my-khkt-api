@@ -193,11 +193,8 @@ app.get('/', tryCatch(async (req, res) => {
     <div class="status"><span class="ok">API Status:</span> Running</div>
     <div class="status"><span class="pending">Pending Commands:</span> ${commandQueue.length}</div>
     <div class="status"><span class="time">Server Time:</span> ${time}</div>
-    <div class="endpoints">
-        Available Endpoints:<br>
-        GET /status | POST /command
-    </div>
 </div>
+<footer>Made with ❤ by Thuận Huy | Boyvapho</footer>
 </body>
 </html>
     `);
@@ -205,4 +202,5 @@ app.get('/', tryCatch(async (req, res) => {
 
 // --- START SERVER ---
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
 
