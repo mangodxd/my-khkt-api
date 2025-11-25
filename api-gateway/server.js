@@ -31,7 +31,6 @@ let currentAttendanceCache = {
     last_update: ""
 };
 let currentConfig = { ...defaultConfig };
-let pendingConfig = null;
 let commandQueue = [];
 let lastCommandNumber = 0;
 
@@ -131,14 +130,46 @@ app.post('/api/login', tryCatch(async (req, res) => {
 }));
 
 app.get('/', tryCatch(async (req, res) => {
-    return res.send(
-        `API Gateway is running.<br>` +
-        `Pending Commands: ${commandQueue.length}<br>` +
-        `Made with ♡ by Thuận Huy | Boyvapho`
-    );
+    const now = new Date();
+    const pad = (n) => n.toString().padStart(2, '0');
+    const time = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+    res.send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Gateway Dashboard</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #f4f4f9; color: #333; text-align: center; padding: 50px; }
+    h1 { color: #ff6f61; }
+    .card { background: #fff; padding: 20px; margin: 20px auto; width: 350px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    ul { list-style: none; padding: 0; margin: 0; }
+    li { padding: 4px 0; }
+    footer { margin-top: 40px; font-size: 0.9em; color: #666; }
+</style>
+</head>
+<body>
+<h1>My Gateway Dashboard</h1>
+<div class="card">
+    <p><strong>Status:</strong> Running</p>
+    <p><strong>Pending Commands:</strong> ${commandQueue.length}</p>
+    <p><strong>Server Time:</strong> ${time}</p>
+</div>
+
+<div class="card">
+    <p><strong>Available Endpoints:</strong></p>
+    <ul>
+        <li>GET /status</li>
+        <li>POST /command</li>
+    </ul>
+</div>
+
+<footer>Made with ❤ by Thuận Huy | Boyvapho</footer>
+</body>
+</html>
+    `);
 }));
 
+// --- START SERVER ---
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-
-
-
