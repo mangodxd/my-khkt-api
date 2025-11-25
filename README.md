@@ -8,10 +8,10 @@ Xin chào! Mình là **Nguyễn Công Thuận Huy**. Đây là câu chuyện v�
 
 | Giai đoạn | Điều mình đã làm |
 |-----------|------------------|
-| **Khởi động** | Bắt đầu với ý tưởng: thay vì điểm danh thủ công, camera sẽ tự nhận diện bạn nào có mặt. Mình test nhanh bằng Python notebook rồi chuyển dần thành module `FaceSystem`. |
-| **Tách lớp kiến trúc** | Khi cần UI và điều khiển từ xa, mình chia project thành 3 phần: `web-ui` giao diện, `api-gateway` điều phối, `python-worker` xử lý camera. Việc tách vậy giúp debug dễ hơn nhiều. |
-| **Tối ưu thực tế** | Học cách cân bằng giữa tốc độ và độ chính xác: giảm kích thước frame, thêm bước enhance ảnh yếu sáng (`enhanceImage`) và cơ chế queue lệnh để worker không bị “ngộp”. |
-| **Hoàn thiện trải nghiệm** | Bổ sung đăng nhập JWT, popup cấu hình giờ auto chụp, hiển thị ảnh thumbnails, và log đẹp bằng `FancyText` để khi chạy trên Raspberry Pi mình vẫn nhìn rõ mọi trạng thái. |
+| **Ý tưởng chính** | Giảm bớt công sức cho giáo viên và nhà trường trong việc điểm danh thủ công. Thay vì mỗi buổi phải kiểm tra từng học sinh, camera sẽ tự động nhận diện ai có mặt, lưu lại kết quả. Bắt đầu bằng các thử nghiệm, vừa code vừa học thêm về nhận diện khuôn mặt. |
+| **Tách lớp kiến trúc** | Khi dự án phức tạp hơn, mình tách thành 3 phần: web-ui (giao diện), api-gateway (điều phối), python-worker (xử lý camera). Cách này giúp debug dễ dàng và phát triển song song.. |
+| **Tối ưu thực tế** | Ap dụng cơ chế queue để worker xử lý lệnh liên tục và đồng bộ mà không bị quá tải. |
+| **Hoàn thiện trải nghiệm** | Bổ sung Web, App cho giáo viên và phụ huynh. |
 
 ---
 
@@ -110,6 +110,7 @@ web-ui (HTML/CSS/JS)  <--JWT-->  api-gateway (Express)
 - Lưu lịch sử điểm danh vào database (PostgreSQL hoặc Firestore) để phân tích dài hạn.
 - Thay queue `polling` bằng WebSocket để giảm độ trễ.
 - Thêm cơ chế “two-factor” khi đăng nhập để an toàn hơn nếu triển khai bên ngoài lớp học.
+
 
 
 
