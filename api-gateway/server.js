@@ -132,13 +132,12 @@ app.post('/api/login', tryCatch(async (req, res) => {
 
 app.get('/', tryCatch(async (req, res) => {
     return res.send(
-        `🌟 My KHKT API 🌟\n` +
-        `API Gateway is running.\n` +
-        `Pending Commands: ${commandQueue.length}\n` +
+        `🌟 My KHKT API 🌟<br>` +
+        `API Gateway is running.<br>` +
+        `Pending Commands: ${commandQueue.length}<br>` +
         `Made with ❤️ by Thuận Huy | Boyvapho`
     );
 }));
 
-
-// --- START SERVER ---
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
