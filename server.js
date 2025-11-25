@@ -1,9 +1,7 @@
-// Server Trung Gian: Node.js + Express + Socket.IO
+// Server Trung Gian: Node.js + Express (HTTP Polling)
 
 require('dotenv').config();
 const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -14,31 +12,51 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@face.com';
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || bcrypt.hashSync('123456', 8); // '123456' hashed
 
 const app = express();
-const server = http.createServer(app);
-
-const io = new Server(server, {
-  cors: {
-    origin: process.env.ALLOWED_ORIGIN || "*", 
-    methods: ["GET", "POST"]
-  }
-});
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // Để xử lý POST body
+app.use(express.urlencoded({ extended: true }));
 
-// --- DATABASE/CACHE ĐƠN GIẢN ---
-let currentAttendanceCache = {
-    total: 0, present: [], present_names: [], absent: [], images: [], image: "", last_update: ""
+// # old code: Socket.IO realtime layer removed, sử dụng HTTP Polling.
+const defaultConfig = {
+    image_capture_interval: ["07:00"],
+    retry_delay: 3,
+    face_recognition_threshold: 0.32,
+    frame_count: 2
 };
 
-let workerSocket = null; 
-const WORKER_ID = "python_worker_1"; 
+let currentAttendanceCache = {
+    total: 0,
+    present: [],
+    present_names: [],
+    absent: [],
+    images: [],
+    image: "",
+    last_update: ""
+};
+let currentConfig = { ...defaultConfig };
+let pendingConfig = null;
+let commandQueue = [];
+let lastCommandNumber = 0;
 
-// --- MIDDLEWARE XÁC THỰC TOKEN ---
+const nextCommandId = () => {
+    lastCommandNumber += 1;
+    return `cmd_${Date.now()}_${lastCommandNumber}`;
+};
+
+const enqueueCommand = (type, payload = {}) => {
+    const command = {
+        id: nextCommandId(),
+        type,
+        payload,
+        timestamp: Date.now()
+    };
+    commandQueue.push(command);
+    return command;
+};
+
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    // Format: "Bearer <TOKEN>"
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
@@ -47,92 +65,105 @@ const authenticateToken = (req, res, next) => {
 
     jwt.verify(token, SECRET_KEY, (err, user) => {
         if (err) {
-            // Token không hợp lệ hoặc hết hạn
             return res.status(403).json({ success: false, message: "Token không hợp lệ hoặc đã hết hạn." });
         }
-        req.user = user; // Lưu thông tin user vào request
+        req.user = user;
         next();
     });
 };
 
-// --- SOCKET.IO HANDLER (Giữ nguyên) ---
-io.on('connection', (socket) => {
-  // ... (Logic giữ nguyên từ phiên bản trước) ...
-  console.log(`[Socket] Client connected: ${socket.id}`);
-
-  if (socket.handshake.query.id === WORKER_ID) {
-    console.log(`[Socket] Python Worker registered: ${socket.id}`);
-    workerSocket = socket;
-  }
-
-  socket.on('result:checkin_done', (payload) => {
-    console.log(`[Socket] Nhận kết quả từ Worker. Có mặt: ${payload.present_names.length}`);
-    currentAttendanceCache = payload;
-    io.emit('attendance_update', currentAttendanceCache); 
-  });
-
-  socket.on('config_updated', (newConfig) => {
-    console.log("[Socket] Cấu hình Worker đã cập nhật:", newConfig);
-  });
-
-  socket.on('disconnect', () => {
-    console.log(`[Socket] Client disconnected: ${socket.id}`);
-    if (socket === workerSocket) {
-      workerSocket = null; 
-      console.log("[Socket] Python Worker disconnected.");
-    }
-  });
-});
+const sanitizeConfig = (newConfig = {}) => {
+    const sanitized = {};
+    Object.keys(defaultConfig).forEach((key) => {
+        if (Object.prototype.hasOwnProperty.call(newConfig, key)) {
+            sanitized[key] = newConfig[key];
+        }
+    });
+    return sanitized;
+};
 
 // --- REST API (CÓ AUTH) ---
 
-// 1. Endpoint để Client yêu cầu điểm danh
-app.post('/api/checkin', authenticateToken, (req, res) => {
-  if (!workerSocket) {
-    return res.status(503).json({ success: false, message: "Python Worker chưa kết nối." });
-  }
-  workerSocket.emit('command:trigger_checkin', { timestamp: Date.now(), user: req.user.email });
-  res.json({ success: true, message: "Đã gửi yêu cầu điểm danh, Worker đang xử lý." });
+app.post('/api/command/trigger_checkin', authenticateToken, (req, res) => {
+    // # old code: /api/checkin phát lệnh qua Socket.IO.
+    const command = enqueueCommand('trigger_checkin', {
+        requestedBy: req.user.email
+    });
+    res.json({
+        success: true,
+        commandId: command.id,
+        message: "Đã xếp lệnh điểm danh, Worker sẽ Poll và xử lý."
+    });
 });
 
-// 2. Endpoint để Client lấy dữ liệu điểm danh mới nhất
-app.get('/api/attendance', authenticateToken, (req, res) => {
-  res.json(currentAttendanceCache);
-});
-
-// 3. Endpoint để Client gửi cấu hình
 app.post('/api/config', authenticateToken, (req, res) => {
-  if (!workerSocket) {
-      return res.status(503).json({ success: false, message: "Python Worker chưa kết nối để cập nhật cấu hình." });
-  }
-  const newConfig = req.body;
-  workerSocket.emit('command:update_config', newConfig);
-  res.json({ success: true, message: "Đã gửi cấu hình, Worker sẽ tự lưu." });
+    const sanitized = sanitizeConfig(req.body || {});
+    if (!Object.keys(sanitized).length) {
+        return res.status(400).json({ success: false, message: "Không có cấu hình hợp lệ." });
+    }
+    currentConfig = { ...currentConfig, ...sanitized };
+    pendingConfig = sanitized;
+    const command = enqueueCommand('update_config', { ...sanitized });
+    res.json({
+        success: true,
+        message: "Đã lưu cấu hình và đẩy lệnh cập nhật tới Worker.",
+        commandId: command.id
+    });
+});
+
+app.get('/api/config', authenticateToken, (req, res) => {
+    res.json(currentConfig);
+});
+
+app.get('/api/attendance', authenticateToken, (req, res) => {
+    res.json(currentAttendanceCache);
+});
+
+// # old code: Endpoint này từng gửi lệnh qua Socket.IO, nay báo deprecated.
+app.post('/api/checkin', authenticateToken, (req, res) => {
+    res.status(410).json({
+        success: false,
+        message: "Endpoint đã thay đổi, vui lòng dùng POST /api/command/trigger_checkin."
+    });
+});
+
+// --- REST API (Worker + Public) ---
+
+app.get('/api/commands', (req, res) => {
+    const commands = commandQueue;
+    commandQueue = [];
+    res.json({ success: true, commands });
+});
+
+app.post('/api/command/ack', (req, res) => {
+    const { id, status, detail } = req.body || {};
+    if (id) {
+        console.log(`[CMD][ACK] ${id} -> ${status}`, detail || {});
+    }
+    res.json({ success: true });
+});
+
+app.post('/api/attendance', (req, res) => {
+    currentAttendanceCache = { ...currentAttendanceCache, ...req.body };
+    currentAttendanceCache.last_update = req.body?.last_update || new Date().toISOString();
+    res.json({ success: true });
 });
 
 // --- REST API (KHÔNG CẦN AUTH) ---
 
-// 4. Endpoint Login
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
-
-    // 1. Kiểm tra Email và Mật khẩu (dùng bcrypt để so sánh hash)
     if (email === ADMIN_EMAIL && bcrypt.compareSync(password, ADMIN_PASSWORD_HASH)) {
-        // 2. Tạo Token
         const token = jwt.sign({ email: email }, SECRET_KEY, { expiresIn: '8h' });
-
         return res.json({ success: true, token: token, message: "Đăng nhập thành công." });
-    } else {
-        return res.status(401).json({ success: false, message: "Email hoặc mật khẩu không đúng." });
     }
+    return res.status(401).json({ success: false, message: "Email hoặc mật khẩu không đúng." });
 });
 
-// 5. Kiểm tra trạng thái kết nối
 app.get('/', (req, res) => {
-  const status = workerSocket ? 'Connected' : 'Disconnected';
-  res.send(`API Gateway is running. Worker Status: ${status}`);
+    res.send(`API Gateway is running. Pending Commands: ${commandQueue.length}`);
 });
 
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
