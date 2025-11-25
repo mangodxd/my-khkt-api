@@ -33,6 +33,11 @@ web-ui (HTML/CSS/JS)  <--JWT-->  api-gateway (Express)
 
 ---
 
+## Giao diện trực quan
+![Giao diện đăng nhâp](img/login.png)
+![Giao diện chính](img/main.png)
+![Giao diện config](img/config.png)
+
 ## Chức năng chính
 
 - **Điểm danh theo lệnh**: nút “Điểm danh” trên web gọi `POST /api/command/trigger_checkin`, Gateway đẩy lệnh vào queue và worker thực thi.
@@ -105,6 +110,7 @@ web-ui (HTML/CSS/JS)  <--JWT-->  api-gateway (Express)
 - Lưu lịch sử điểm danh vào database (PostgreSQL hoặc Firestore) để phân tích dài hạn.
 - Thay queue `polling` bằng WebSocket để giảm độ trễ.
 - Thêm cơ chế “two-factor” khi đăng nhập để an toàn hơn nếu triển khai bên ngoài lớp học.
+
 
 
 
