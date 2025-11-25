@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body { display:flex; justify-content:center; align-items:center; height:100vh; background:#f0f2f5; font-family:Arial, sans-serif; }
+    .login-card { background:white; padding:24px; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:300px; }
+    input { width:100%; padding:8px; margin:8px 0; border-radius:6px; border:1px solid #ccc; }
+    button { width:100%; padding:8px; border:none; border-radius:6px; background:#2563eb; color:white; font-weight:600; cursor:pointer; }
+    button:hover { background:#1f4fd6; }
+    .error { color:red; font-size:14px; text-align:center; display:none; }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-card">
+    <h2 style="text-align:center;">Đăng nhập</h2>
+
+    <form id="loginForm" method="post">
+      <input type="email" id="email" name="email" placeholder="Email" required />
+      <input type="password" id="password" name="password" placeholder="Mật khẩu" required />
+      <p id="error-message" class="error"></p>
+      <button type="submit">Đăng nhập</button>
+    </form>
+  </div>
+
+
+  <script>
+    const API_GATEWAY_URL = 'https://my-khkt-api.onrender.com';
+    const apiBaseUrl = API_GATEWAY_URL.replace(/\/+$/, '');
+
+    const form = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const errorMessage = document.getElementById('error-message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMessage.style.display = 'none';
+
+      try {
+        const res = await fetch(apiBaseUrl + '/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: emailInput.value,
+            password: passwordInput.value
+          })
+        });
+
+        const data = await res.json();
+
+        // Nếu API trả về success = false → NÉM LỖI để nhảy vào catch
+        if (!res.ok || !data.success) {
+          throw new Error("login failed");
+        }
+
+        localStorage.setItem('authToken', data.token);
+        window.location.href = '/index.html'; 
+
+      } catch (error) {
+        errorMessage.textContent = "Đã xảy ra lỗi, vui lòng thử lại sau.";
+        errorMessage.style.display = 'block';
+      }
+    });
+  </script>

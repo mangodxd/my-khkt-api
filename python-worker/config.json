@@ -1,0 +1,6 @@
+{
+    "image_capture_interval": ["07:00"],
+    "retry_delay": 3,
+    "face_recognition_threshold": 0.25,
+    "frame_count": 2  
+}

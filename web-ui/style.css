@@ -1,0 +1,394 @@
+/* ====== Biến gốc & reset ====== */
+:root {
+  /* Màu sắc */
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --primary: #2563eb;
+  --primary-600: #1f4fd6;
+  --muted: #6b7280;
+  --danger: #ef4444;
+
+  /* Khoảng cách & Kích thước cơ bản */
+  --base-spacing: 4px; /* Đơn vị cơ bản (4, 8, 12, 16...) */
+  --card-padding: calc(var(--base-spacing) * 6); /* 24px */
+  --gap-md: calc(var(--base-spacing) * 5); /* 20px */
+  --gap-sm: calc(var(--base-spacing) * 2); /* 8px */
+
+  /* Border Radius & Shadow */
+  --radius: calc(var(--base-spacing) * 3); /* 12px */
+  --shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
+  --sm-shadow: 0 3px 10px rgba(16, 24, 40, 0.04);
+  --max-width: 1000px;
+  
+  /* Buttons */
+  --btn-padding-y: calc(var(--base-spacing) * 2); /* 8px */
+  --btn-padding-x: calc(var(--base-spacing) * 3.5); /* 14px */
+  
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: #111827;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: var(--card-padding); /* Dùng biến: 24px */
+  font-size: 15px;
+}
+
+/* ====== Tổng thể trang ====== */
+.page {
+  width: 100%;
+  max-width: var(--max-width);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md); /* Dùng biến: 20px */
+  /* padding-top được tính bằng kích thước nút + khoảng cách */
+  padding-top: calc(40px + var(--gap-md)); 
+}
+
+/* ====== Nút config + logout góc trên ====== */
+.top-buttons {
+  position: absolute;
+  top: var(--base-spacing); /* 4px */
+  right: var(--base-spacing); /* 4px */
+  display: flex;
+  gap: var(--gap-sm); /* Dùng biến: 8px */
+}
+
+.top-buttons .config-btn,
+.top-buttons .logout-btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: var(--sm-shadow);
+  transition: 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.top-buttons .config-btn:hover {
+  background: var(--primary-600);
+  transform: scale(1.08);
+}
+
+.top-buttons .logout-btn {
+  background: var(--danger);
+}
+
+.top-buttons .logout-btn:hover {
+  background: #dc2626;
+  transform: scale(1.08);
+}
+
+
+/* ====== Layout chính ====== */
+.card.two-col {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--gap-md); /* Dùng biến: 20px */
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--card-padding); /* Dùng biến: 24px */
+}
+.left-pane,
+.right-pane {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--base-spacing) * 4); /* 16px */
+}
+
+/* ====== Header ====== */
+.card-header {
+  text-align: center;
+}
+.card-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+}
+.sub {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: var(--base-spacing); /* 4px */
+}
+
+/* ====== Camera & ảnh ====== */
+.camera-wrap {
+  display: flex;
+  justify-content: center;
+}
+.camera-frame {
+  width: 100%;
+  background: #fff;
+  border-radius: calc(var(--base-spacing) * 2.5); /* 10px */
+  border: 1px solid #e6eefc;
+  padding: calc(var(--base-spacing) * 2); /* 8px */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: var(--sm-shadow);
+}
+.camera-frame img {
+  width: 100%;
+  max-height: 70vh; 
+  height: auto;
+  border-radius: calc(var(--base-spacing) * 2.5); /* 10px */
+  object-fit: contain;
+  background: #f3f6fb;
+  transition: all 0.3s ease;
+}
+
+/* ====== Trạng thái & thumbnail ====== */
+.status-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--base-spacing) * 3); /* 12px */
+}
+.status {
+  font-weight: 500;
+}
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--gap-sm); /* 8px */
+  flex-wrap: wrap;
+}
+.thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: calc(var(--base-spacing) * 2.5); /* 10px */
+  width: 100%;
+  justify-items: center;
+}
+
+.thumbs img {
+  width: 100%;
+  height: calc(var(--base-spacing) * 20); /* 80px */
+  object-fit: cover;
+  border-radius: calc(var(--base-spacing) * 2); /* 8px */
+  border: 2px solid transparent;
+  box-shadow: var(--sm-shadow);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.thumbs img:hover {
+  transform: scale(1.05);
+  border-color: var(--primary);
+}
+
+.thumbs img.active {
+  border-color: var(--primary);
+  transform: scale(1.08);
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.4);
+}
+
+/* ====== Tabs học sinh có mặt / vắng mặt ====== */
+.attendance-tabs {
+  gap: var(--gap-sm); /* 8px */
+  margin-bottom: var(--gap-sm); /* 8px */
+  display: flex;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: calc(var(--base-spacing) * 1.5) 0; /* 6px 0 */
+  border: none;
+  border-radius: calc(var(--base-spacing) * 2); /* 8px */
+  background: #f3f4f6;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tab-btn.active {
+  background: var(--primary);
+  color: white;
+}
+
+.tab-btn:hover {
+  background: #e0e7ff;
+}
+
+/* danh sách học sinh */
+.absent-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--gap-sm); /* 8px */
+}
+
+.absent-list li {
+  background: #fff7f7;
+  color: var(--danger);
+  border: 1px solid #ffebe8;
+  border-radius: calc(var(--base-spacing) * 2); /* 8px */
+  padding: calc(var(--base-spacing) * 2) calc(var(--base-spacing) * 2.5); /* 8px 10px */
+  text-align: center;
+  font-size: 14px;
+  box-shadow: var(--sm-shadow);
+}
+
+/* Khi hiển thị học sinh có mặt */
+.absent-list.present li {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+/* ====== Buttons ====== */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-weight: 600;
+  border: none;
+}
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border-radius: calc(var(--base-spacing) * 2); /* 8px */
+  padding: var(--btn-padding-y) var(--btn-padding-x); /* 8px 14px */
+}
+.btn-primary:hover {
+  background: var(--primary-600);
+  transform: translateY(-1px);
+}
+.btn-secondary {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: calc(var(--base-spacing) * 2); /* 8px */
+  padding: var(--btn-padding-y) var(--btn-padding-x); /* 8px 14px */
+}
+.btn-secondary:hover {
+  transform: translateY(-1px);
+}
+.btn-primary.small {
+  /* Tự động tính toán padding dựa trên nút chính */
+  padding: calc(var(--btn-padding-y) - 2px) calc(var(--btn-padding-x) - 4px); /* 6px 10px */
+  font-size: 13px;
+}
+
+/* ====== Modal ====== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gap-md); /* 20px */
+  z-index: 50;
+}
+.modal.hidden {
+  display: none;
+}
+.modal-panel {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 480px;
+  padding: var(--card-padding); /* 24px */
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--base-spacing) * 3.5); /* 14px */
+}
+.modal-header h2 {
+  text-align: center;
+  font-size: 18px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm); /* 8px */
+}
+.field input,
+.field select {
+  padding: calc(var(--base-spacing) * 2) calc(var(--base-spacing) * 2.5); /* 8px 10px */
+  border-radius: calc(var(--base-spacing) * 2); /* 8px */
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  width: 100%;
+}
+.time-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-sm); /* 8px */
+  list-style: none;
+}
+.time-list li {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--base-spacing) * 1.5); /* 6px */
+  background: #eff6ff;
+  border-radius: calc(var(--base-spacing) * 2); /* 8px */
+  padding: calc(var(--base-spacing) * 1.5) calc(var(--base-spacing) * 2.5); /* 6px 10px */
+  font-weight: 600;
+  font-size: 13px;
+}
+.time-del-btn {
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+  border-radius: calc(var(--base-spacing) * 1.5); /* 6px */
+  padding: calc(var(--base-spacing) * 1) calc(var(--base-spacing) * 1.5); /* 4px 6px */
+}
+.time-del-btn:hover {
+  background: #fee2e2;
+}
+.time-add-row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm); /* 8px */
+}
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--gap-sm); /* 8px */
+}
+.config-msg {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 900px) {
+  .card.two-col {
+    grid-template-columns: 1fr;
+  }
+  .absent-list {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+  .top-buttons {
+    justify-content: flex-end;
+  }
+}
+@media (max-width: 500px) {
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+  .thumbs img {
+    /* Tự động tính toán chiều cao thumbnail nhỏ hơn */
+    height: calc(var(--base-spacing) * 15); /* 60px */
+  }
+}
