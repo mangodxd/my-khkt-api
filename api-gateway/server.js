@@ -130,77 +130,16 @@ app.post('/api/login', tryCatch(async (req, res) => {
 }));
 
 app.get('/', tryCatch(async (req, res) => {
-    const now = new Date();
-    const pad = (n) => n.toString().padStart(2, '0');
-    const time = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-
-    res.send(`
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>My Gateway Dashboard</title>
-<meta http-equiv="refresh" content="5">
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #1e1e2f;
-        color: #f0f0f0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-    }
-    .panel {
-        background: #2e2e44;
-        padding: 40px 60px;
-        border-radius: 15px;
-        text-align: center;
-        box-shadow: 0 8px 15px rgba(0,0,0,0.3);
-    }
-    h1 {
-        color: #ff6f61;
-        margin-bottom: 30px;
-        font-size: 2em;
-    }
-    .status {
-        font-size: 1.2em;
-        margin: 10px 0;
-    }
-    .status span {
-        font-weight: bold;
-    }
-    .status .ok {
-        color: #4caf50;
-    }
-    .status .pending {
-        color: #ffeb3b;
-    }
-    .status .time {
-        color: #00bcd4;
-    }
-    .endpoints {
-        margin-top: 20px;
-        font-size: 1em;
-        color: #ccc;
-    }
-</style>
-</head>
-<body>
-<div class="panel">
-    <h1> My Gateway Dashboard </h1>
-    <div class="status"><span class="ok">API Status:</span> Running</div>
-    <div class="status"><span class="pending">Pending Commands:</span> ${commandQueue.length}</div>
-    <div class="status"><span class="time">Server Time:</span> ${time}</div>
-</div>
-<footer>Made with ❤ by Thuận Huy | Boyvapho</footer>
-</body>
-</html>
-    `);
+    return res.send(
+        `My Gateway API<br>` +
+        `Status: Running.<br>` +
+        `Pending Commands: ${commandQueue.length}<br>` +
+        `Made with ❤ by Thuận Huy | Boyvapho`
+    );
 }));
 
 // --- START SERVER ---
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
 
 
