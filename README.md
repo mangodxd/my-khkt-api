@@ -1,6 +1,6 @@
 # SMART MUSTER CAMERA – Hệ thống điểm danh và chấm công thông minh
 
-Xin chào! Mình là **Nguyễn Công Thuận Huy, học sinh lớp 9**. Đây là câu chuyện về dự án KHKT mà mình dành nhiều tối để viết code, sửa bug và học hỏi thêm về thị giác máy tính. README này vừa là nhật ký hành trình, vừa là tài liệu giúp mọi người hiểu cách mình dựng nên hệ thống nhận diện khuôn mặt để điểm danh tự động.
+Xin chào! Mình là **Nguyễn Công Thuận Huy**. Đây là câu chuyện về dự án KHKT mà mình dành nhiều tối để viết code, sửa bug và học hỏi thêm về thị giác máy tính. README này vừa là nhật ký hành trình, vừa là tài liệu giúp mọi người hiểu cách mình dựng nên hệ thống nhận diện khuôn mặt để điểm danh tự động.
 
 ---
 
@@ -47,6 +47,7 @@ web-ui (HTML/CSS/JS)  <--JWT-->  api-gateway (Express)
 ## Ứng dụng thực tế
 
 - Điểm danh lớp học sáng sớm: chỉ cần bật camera IP và mở web trên điện thoại giáo viên.
+- Phụ huynh có thể quan sát và theo dõi chuyên cần của con em mình.
 - Giám sát câu lạc bộ hoặc phòng thí nghiệm: dễ dàng thêm ảnh thành viên mới vào `python-worker/data/faces` rồi chạy lại `FaceSystem.registerFace`.
 - Nghiên cứu KHKT: bộ mã nguồn này giúp mình trình bày rõ cách phối hợp IoT (camera), AI (nhận diện khuôn mặt) và web (giao diện điều khiển) trong một hệ thống hoàn chỉnh.
 
@@ -104,5 +105,6 @@ web-ui (HTML/CSS/JS)  <--JWT-->  api-gateway (Express)
 - Lưu lịch sử điểm danh vào database (PostgreSQL hoặc Firestore) để phân tích dài hạn.
 - Thay queue `polling` bằng WebSocket để giảm độ trễ.
 - Thêm cơ chế “two-factor” khi đăng nhập để an toàn hơn nếu triển khai bên ngoài lớp học.
+
 
 
