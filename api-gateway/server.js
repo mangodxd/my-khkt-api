@@ -102,20 +102,16 @@ const tryCatch = (fn) => async (req, res) => {
 // --- API ROUTES ---
 app.post('/api/attendance/upload_image', tryCatch(async (req, res) => {
     const { attendance_id, image } = req.body || {};
-
     if (!image) {
         throw new Error("Thiếu image base64.");
     }
-
-    // Lưu vào cache (lưu tất cả ảnh)
     if (!currentAttendanceCache.images) {
         currentAttendanceCache.images = [];
     }
-
-    currentAttendanceCache.images.push(image);
-
-    // Broadcast cho frontend
-    broadcast("attendance_image", { image });
+    if (!currentAttendanceCache.images.includes(image)) {
+        currentAttendanceCache.images.push(image);
+    }
+    broadcast("attendance_update", currentAttendanceCache);
 
     return res.json({ success: true });
 }));
@@ -168,16 +164,11 @@ app.post('/api/command/ack', tryCatch(async (req, res) => {
 
 // Nhận data từ Worker -> Broadcast cho Frontend
 app.post('/api/attendance', tryCatch(async (req, res) => {
-  // Variable assignment
     currentAttendanceCache = { ...currentAttendanceCache, ...req.body };
-  // Variable assignment
     currentAttendanceCache.last_update = req.body?.last_update || new Date().toISOString();
-  // Variable assignment
-    
-    // PUSH data cho Frontends
+    currentAttendanceCache.images = currentAttendanceCache.image ? [currentAttendanceCache.image] : [];
     broadcast('attendance_update', currentAttendanceCache);
-    
-    return res.json({ success: true });
+    return res.json({ success: true, attendance_id: `att_${Date.now()}` }); 
 }));
 
 app.post('/api/login', tryCatch(async (req, res) => {
