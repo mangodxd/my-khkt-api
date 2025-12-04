@@ -2,8 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const WebSocket = require('ws');
+const http = require('http');
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.JWT_SECRET;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
@@ -31,19 +33,28 @@ let currentAttendanceCache = {
     last_update: ""
 };
 let currentConfig = { ...defaultConfig };
-let commandQueue = [];
-let lastCommandNumber = 0;
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
 
-const nextCommandId = () => {
-    lastCommandNumber += 1;
-    return `cmd_${Date.now()}_${lastCommandNumber}`;
+// Helper: Broadcast data to all connected clients (Worker + Frontends)
+const broadcast = (type, payload) => {
+    const message = JSON.stringify({ type, id: `evt_${Date.now()}`, payload });
+    wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(message);
+        }
+    });
 };
 
-const enqueueCommand = (type, payload = {}) => {
-    const command = { id: nextCommandId(), type, payload, timestamp: Date.now() };
-    commandQueue.push(command);
-    return command;
-};
+wss.on('connection', (ws) => {
+    console.log('Client connected via WebSocket');
+    
+    ws.send(JSON.stringify({ type: 'config_update', payload: currentConfig }));
+    ws.send(JSON.stringify({ type: 'attendance_update', payload: currentAttendanceCache }));
+
+    ws.on('close', () => console.log('Client disconnected'));
+    ws.on('error', (err) => console.error('WS Error:', err));
+});
 
 // --- AUTH ---
 const authenticateToken = (req, res, next) => {
@@ -76,18 +87,26 @@ const tryCatch = (fn) => async (req, res) => {
     }
 };
 
+// --- API ROUTES ---
+
 app.post('/api/command/trigger_checkin', authenticateToken, tryCatch(async (req, res) => {
-    const command = enqueueCommand('trigger_checkin', { requestedBy: req.user.email });
-    return res.json({ success: true, commandId: command.id, message: "Đã xếp lệnh điểm danh, Worker sẽ Poll và xử lý." });
+    const payload = { requestedBy: req.user.email, source: 'manual' };
+    
+    // PUSH command to Worker
+    broadcast('trigger_checkin', payload);
+    
+    return res.json({ success: true, message: "Đã gửi lệnh Real-time tới Worker." });
 }));
 
 app.post('/api/config', authenticateToken, tryCatch(async (req, res) => {
     const sanitized = sanitizeConfig(req.body || {});
     if (!Object.keys(sanitized).length) throw new Error("Không có cấu hình hợp lệ.");
     currentConfig = { ...currentConfig, ...sanitized };
-    pendingConfig = sanitized;
-    const command = enqueueCommand('update_config', sanitized);
-    return res.json({ success: true, message: "Đã lưu cấu hình và đẩy lệnh cập nhật tới Worker.", commandId: command.id });
+    
+    // PUSH config update to Worker
+    broadcast('update_config', sanitized);
+    
+    return res.json({ success: true, message: "Đã lưu và đẩy cấu hình mới." });
 }));
 
 app.get('/api/config', authenticateToken, tryCatch(async (req, res) => {
@@ -98,15 +117,7 @@ app.get('/api/attendance', authenticateToken, tryCatch(async (req, res) => {
     return res.json(currentAttendanceCache);
 }));
 
-app.post('/api/checkin', authenticateToken, tryCatch(async (req, res) => {
-    return res.status(410).json({ success: false, message: "Endpoint đã thay đổi, vui lòng dùng POST /api/command/trigger_checkin." });
-}));
-
-app.get('/api/commands', tryCatch(async (req, res) => {
-    const commands = commandQueue;
-    commandQueue = [];
-    return res.json({ success: true, commands });
-}));
+// GET /api/commands
 
 app.post('/api/command/ack', tryCatch(async (req, res) => {
     const { id, status, detail } = req.body || {};
@@ -114,9 +125,14 @@ app.post('/api/command/ack', tryCatch(async (req, res) => {
     return res.json({ success: true });
 }));
 
+// Receive data from Worker -> Broadcast to Frontend
 app.post('/api/attendance', tryCatch(async (req, res) => {
     currentAttendanceCache = { ...currentAttendanceCache, ...req.body };
     currentAttendanceCache.last_update = req.body?.last_update || new Date().toISOString();
+    
+    // PUSH data to Frontends
+    broadcast('attendance_update', currentAttendanceCache);
+    
     return res.json({ success: true });
 }));
 
@@ -130,16 +146,7 @@ app.post('/api/login', tryCatch(async (req, res) => {
 }));
 
 app.get('/', tryCatch(async (req, res) => {
-    return res.send(
-        `My Gateway API<br>` +
-        `Status: Running.<br>` +
-        `Pending Commands: ${commandQueue.length}<br>` +
-        `Made with ❤ by Thuận Huy | Boyvapho`
-    );
+    res.send(`<h1>🌟 KHKT API (WebSocket Enabled) Running 🌟</h1>`);
 }));
 
-// --- START SERVER ---
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-
-
-
+server.listen(PORT, () => console.log(`Server & WebSocket running on port ${PORT}`));
