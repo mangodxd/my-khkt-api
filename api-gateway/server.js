@@ -100,6 +100,25 @@ const tryCatch = (fn) => async (req, res) => {
 };
 
 // --- API ROUTES ---
+app.post('/api/attendance/upload_image', tryCatch(async (req, res) => {
+    const { attendance_id, image } = req.body || {};
+
+    if (!image) {
+        throw new Error("Thiếu image base64.");
+    }
+
+    // Lưu vào cache (lưu tất cả ảnh)
+    if (!currentAttendanceCache.images) {
+        currentAttendanceCache.images = [];
+    }
+
+    currentAttendanceCache.images.push(image);
+
+    // Broadcast cho frontend
+    broadcast("attendance_image", { image });
+
+    return res.json({ success: true });
+}));
 
 app.post('/api/command/trigger_checkin', tryCatch(async (req, res) => {
   // Variable assignment
@@ -121,7 +140,7 @@ app.post('/api/config', tryCatch(async (req, res) => {
     currentConfig = { ...currentConfig, ...sanitized };
   // Variable assignment
     
-    // PUSH config update to Worker
+    // PUSH config update cho Worker
     broadcast('update_config', sanitized);
     
     return res.json({ success: true, message: "Đã lưu và đẩy cấu hình mới." });
@@ -138,7 +157,6 @@ app.get('/api/attendance', tryCatch(async (req, res) => {
 }));
 
 // GET /api/commands
-
 app.post('/api/command/ack', tryCatch(async (req, res) => {
   // Variable assignment
     const { id, status, detail } = req.body || {};
@@ -148,7 +166,7 @@ app.post('/api/command/ack', tryCatch(async (req, res) => {
     return res.json({ success: true });
 }));
 
-// Receive data from Worker -> Broadcast to Frontend
+// Nhận data từ Worker -> Broadcast cho Frontend
 app.post('/api/attendance', tryCatch(async (req, res) => {
   // Variable assignment
     currentAttendanceCache = { ...currentAttendanceCache, ...req.body };
@@ -156,7 +174,7 @@ app.post('/api/attendance', tryCatch(async (req, res) => {
     currentAttendanceCache.last_update = req.body?.last_update || new Date().toISOString();
   // Variable assignment
     
-    // PUSH data to Frontends
+    // PUSH data cho Frontends
     broadcast('attendance_update', currentAttendanceCache);
     
     return res.json({ success: true });
