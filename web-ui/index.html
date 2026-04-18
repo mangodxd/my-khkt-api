@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>THCS Tran Quý Cáp</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <nav class="nav">
+    <div class="nav-left"></div>
+
+    <div class="nav-center brand-hero">
+      <strong>SMART MUSTER CAMERA</strong>
+    </div>
+
+    <div class="nav-right">
+      <div id="navClock" class="nav-clock">--:--</div>
+      <button id="openHistoryBtn" class="icon-btn" title="Lịch sử">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </button>
+      <button id="openConfigBtn" class="icon-btn" title="Cấu hình">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+      <button id="logoutBtn" class="logout-btn">Thoát</button>
+    </div>
+  </nav>
+
+  <div class="main-grid">
+
+    <section class="camera-panel">
+      <div class="cam-header">
+        <div class="cam-label">
+          <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+          <span class="cam-name">LỚP HỌC</span>
+        </div>
+        <span id="camStatus" class="cam-status">Đang kết nối...</span>
+      </div>
+
+      <div class="cam-viewport">
+        <img id="camFrame" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Camera Feed" />
+      </div>
+
+      <div class="cam-footer">
+        <div id="thumbStrip" class="thumb-strip"></div>
+        <button id="checkinBtn" class="checkin-btn" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          <span id="checkinLabel">ĐIỂM DANH</span>
+        </button>
+      </div>
+    </section>
+
+    <aside class="roster-panel">
+      <div class="roster-header">
+        <div class="stat-row">
+          <div id="presentCard" class="stat-card active-present" role="button" tabindex="0">
+            <div id="countPresent" class="stat-num present">0</div>
+            <div class="stat-tag">CÓ MẶT</div>
+          </div>
+          <div id="absentCard" class="stat-card" role="button" tabindex="0">
+            <div id="countAbsent" class="stat-num absent">0</div>
+            <div class="stat-tag">VẮNG MẶT</div>
+          </div>
+        </div>
+
+        <div class="progress-track">
+          <div id="progressFill" class="progress-fill" style="width:0%"></div>
+        </div>
+
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Tìm theo tên học sinh..." autocomplete="off" />
+        </div>
+      </div>
+
+      <div id="rosterList" class="roster-list"></div>
+
+      <div class="roster-footer">
+        <span class="footer-label">Lần cập nhật cuối:</span>
+        <span id="lastUpdateTime" class="footer-time">--:--</span>
+      </div>
+    </aside>
+
+  </div></div><div id="configModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span class="modal-title">Cấu hình hệ thống</span>
+      <button id="closeConfigBtn" class="icon-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label">GIỜ TỰ ĐỘNG ĐIỂM DANH</label>
+        <div id="timeTagsWrap" class="tags-wrap"></div>
+        <div class="time-add-row">
+          <input id="newTimeInput" type="time" class="field-input" />
+          <button id="addTimeBtn" class="btn-ghost" style="white-space:nowrap;">+ Thêm giờ</button>
+        </div>
+      </div>
+      <div class="three-col">
+        <div class="field-group">
+          <label class="field-label">DELAY (S)</label>
+          <input id="cfgRetryDelay" type="number" min="1" max="60" class="field-input" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">NGƯỠNG AI</label>
+          <input id="cfgThreshold" type="number" step="0.01" min="0.1" max="0.99" class="field-input" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">SỐ FRAME</label>
+          <input id="cfgFrameCount" type="number" min="1" max="5" class="field-input" />
+        </div>
+      </div>
+      <div id="configMsg" class="msg-line"></div>
+      <div class="modal-actions">
+        <button id="cancelConfigBtn" class="btn-ghost">Hủy</button>
+        <button id="saveConfigBtn" class="btn-save">LƯU CẤU HÌNH</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="historyModal" class="modal-overlay hidden">
+  <div class="modal-box wide history-modal">
+    <div class="modal-head">
+      <span class="modal-title">Lịch sử điểm danh</span>
+      <button id="closeHistoryBtn" class="icon-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div id="historyListPane" class="history-list-pane">
+        <div id="historyItems"></div>
+        <button id="loadMoreBtn" class="load-more hidden">Tải thêm dữ liệu</button>
+      </div>
+      <div id="historyDetailPane" class="history-detail-pane">
+        <div class="detail-empty">Chọn một phiên bên trái để xem chi tiết</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toastArea"></div>
+
+<script type="module" src="./js/app.js"></script>
+</body>
+</html>

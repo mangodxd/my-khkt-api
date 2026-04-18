@@ -1,0 +1,245 @@
+# =========================
+# Auto detect text files and normalize line endings to LF
+# =========================
+* text=auto
+
+# =========================
+# Documentation
+# =========================
+*.md            text eol=lf
+*.txt           text eol=lf
+*.rst           text eol=lf
+LICENSE         text eol=lf
+CONTRIBUTING    text eol=lf
+README*         text eol=lf
+CHANGELOG*      text eol=lf
+AUTHORS         text eol=lf
+HISTORY         text eol=lf
+NOTICE          text eol=lf
+CHANGES         text eol=lf
+
+# =========================
+# Configuration Files
+# =========================
+*.json          text eol=lf
+*.yaml          text eol=lf
+*.yml           text eol=lf
+*.toml          text eol=lf
+*.ini           text eol=lf
+*.cfg           text eol=lf
+*.conf          text eol=lf
+.env*           text eol=lf
+.editorconfig   text eol=lf
+.gitignore      text eol=lf
+.gitattributes  text eol=lf
+
+# =========================
+# JavaScript / Node.js
+# =========================
+*.js            text eol=lf
+*.jsx           text eol=lf
+*.mjs           text eol=lf
+*.cjs           text eol=lf
+*.ts            text eol=lf
+*.tsx           text eol=lf
+*.vue           text eol=lf
+package.json    text eol=lf
+package-lock.json text eol=lf
+yarn.lock       text eol=lf
+.babelrc        text eol=lf
+.eslintrc       text eol=lf
+.prettierrc      text eol=lf
+.npmrc          text eol=lf
+
+# =========================
+# Python
+# =========================
+*.py            text eol=lf
+*.pyx           text eol=lf
+*.pyi           text eol=lf
+*.pyc           binary
+*.pyo           binary
+*.pyd           binary
+*.so            binary
+*.egg           binary
+*.egg-info      binary
+.python-version text eol=lf
+requirements*.txt text eol=lf
+setup.py        text eol=lf
+setup.cfg       text eol=lf
+tox.ini         text eol=lf
+pytest.ini      text eol=lf
+.flake8         text eol=lf
+pyproject.toml  text eol=lf
+
+# =========================
+# Web - HTML / CSS / SCSS
+# =========================
+*.html          text eol=lf
+*.htm           text eol=lf
+*.css           text eol=lf
+*.scss          text eol=lf
+*.sass          text eol=lf
+*.less          text eol=lf
+*.xml           text eol=lf
+*.svg           text eol=lf
+*.xhtml         text eol=lf
+
+# =========================
+# Shell Scripts
+# =========================
+*.sh            text eol=lf
+*.bash          text eol=lf
+*.zsh           text eol=lf
+*.fish          text eol=lf
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+*.ps1           text eol=crlf
+*.psm1          text eol=crlf
+Makefile        text eol=lf
+
+# =========================
+# Binary Files
+# =========================
+# Images
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.gif           binary
+*.ico           binary
+*.webp          binary
+*.svg           text eol=lf
+
+# Videos
+*.mp4           binary
+*.webm          binary
+*.mov           binary
+*.avi           binary
+*.flv           binary
+*.mkv           binary
+
+# Audio
+*.mp3           binary
+*.wav           binary
+*.flac          binary
+*.aac           binary
+*.ogg           binary
+
+# Archives
+*.zip           binary
+*.tar           binary
+*.tar.gz        binary
+*.7z            binary
+*.rar           binary
+*.iso           binary
+
+# Executables
+*.exe           binary
+*.dll           binary
+*.so            binary
+*.dylib         binary
+*.class         binary
+*.jar           binary
+
+# Documents
+*.pdf           binary
+*.doc           binary
+*.docx          binary
+*.xls           binary
+*.xlsx          binary
+*.ppt           binary
+*.pptx          binary
+*.odt           binary
+*.ods           binary
+
+# =========================
+# Project-Specific Binary Files
+# =========================
+
+# ML/AI Models
+*.pb            binary
+*.h5            binary
+*.hdf5          binary
+*.keras         binary
+*.pth           binary
+*.pt            binary
+*.onnx          binary
+*.bin           binary
+*.model         binary
+*.pkl           binary
+*.pickle        binary
+*.joblib        binary
+*.npy           binary
+*.npz           binary
+
+# Databases
+*.db            binary
+*.sqlite        binary
+*.sqlite3       binary
+*.mdb           binary
+*.sqlite-journal binary
+
+# Compiled/Built files
+*.o             binary
+*.a             binary
+*.pyc           binary
+*.pyo           binary
+*.node          binary
+*.wasm          binary
+
+# =========================
+# Diff and Merge Settings
+# =========================
+
+# Use union merge for package files
+package.json merge=union
+package-lock.json merge=union
+yarn.lock merge=union
+requirements.txt merge=union
+
+# Use binary for images to avoid merge conflicts
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+
+# =========================
+# Special Handling
+# =========================
+
+# Treat .git files as binary to avoid unwanted diffs
+.git* binary
+
+# Treat npm binaries as binary
+bin/** binary
+.bin/** binary
+
+# =========================
+# Line Ending Consistency
+# =========================
+
+# Windows-specific line endings
+*.bat eol=crlf
+*.cmd eol=crlf
+*.ps1 eol=crlf
+*.psm1 eol=crlf
+
+# Unix-specific line endings
+*.sh eol=lf
+*.bash eol=lf
+Makefile eol=lf
+
+# All code should use LF by default
+*.js eol=lf
+*.jsx eol=lf
+*.ts eol=lf
+*.tsx eol=lf
+*.py eol=lf
+*.java eol=lf
+*.c eol=lf
+*.cpp eol=lf
+*.h eol=lf
+*.go eol=lf
+*.rb eol=lf
+*.php eol=lf
