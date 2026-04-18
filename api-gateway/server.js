@@ -10,6 +10,7 @@ const express = require('express');
 const cors = require('cors');
 const http = require('http');
 const { initWebSocket } = require('./ws');
+const { initDB } = require('./db');
 
 // Import route handlers
 const authRoutes = require('./routes/auth');
@@ -44,7 +45,19 @@ app.get('/', (req, res) => {
     res.send(`<h1>Smart Muster Camera API is Running!</h1>`);
 });
 
-// Start server
-server.listen(PORT, () => {
-    console.log(`[Server] API Gateway running on port ${PORT}`);
-});
+// Start server with database initialization
+async function startServer() {
+    try {
+        await initDB();
+        console.log('[Server] Database initialized');
+        
+        server.listen(PORT, () => {
+            console.log(`[Server] API Gateway running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('[Server] Failed to start:', error);
+        process.exit(1);
+    }
+}
+
+startServer();
