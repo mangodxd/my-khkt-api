@@ -159,19 +159,12 @@ def run_checkin_workflow(face_system, stream, command_meta: dict) -> dict:
             'total': len(all_students),
             'present_names': present_names,
             'absent_names': absent_names,
-            'image': imgs[0] if imgs else None,
+            'images': imgs,  # Send all captured images as array
             'last_update': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
         
-        # Send primary attendance data to gateway
+        # Send attendance data with all images to gateway
         result = gateway.post_attendance(payload)
-        
-        # Upload additional images if available
-        if result and "attendance_id" in result and len(imgs) > 1:
-            att_id = result["attendance_id"]
-            for extra_img in imgs[1:]:
-                gateway.upload_image(att_id, extra_img, is_primary=0)
-                time.sleep(0.1)  # Prevent network congestion
                 
         FancyText.success(f"Check-in complete. Present: {len(present_names)}/{len(all_students)}")
         return {'detected': len(present_names)}

@@ -9,7 +9,7 @@ CONFIG_FILE = 'config.json'
 DEFAULT_CFG = {
     'image_capture_interval': ['07:00'],
     'retry_delay': 3,
-    'face_recognition_threshold': 0.32,
+    'face_recognition_threshold': 0.4,
     'frame_count': 2
 }
 

@@ -73,6 +73,32 @@ pytest.ini      text eol=lf
 pyproject.toml  text eol=lf
 
 # =========================
+# Dart / Flutter
+# =========================
+*.dart          text eol=lf
+pubspec.yaml    text eol=lf
+pubspec.lock    text eol=lf
+analysis_options.yaml text eol=lf
+.dartignore     text eol=lf
+.flutter-plugins text eol=lf
+.flutter-plugins-dependencies text eol=lf
+*.gradle        text eol=lf
+build.gradle*   text eol=lf
+gradle.properties text eol=lf
+settings.gradle text eol=lf
+local.properties text eol=lf
+AndroidManifest.xml text eol=lf
+*.swift         text eol=lf
+*.h             text eol=lf
+*.m             text eol=lf
+*.mm            text eol=lf
+Podfile         text eol=lf
+Podfile.lock    binary
+*.pbxproj       binary
+*.xcworkspace   binary
+*.xcodeproj     binary
+
+# =========================
 # Web - HTML / CSS / SCSS
 # =========================
 *.html          text eol=lf
@@ -97,6 +123,86 @@ pyproject.toml  text eol=lf
 *.ps1           text eol=crlf
 *.psm1          text eol=crlf
 Makefile        text eol=lf
+*.mk            text eol=lf
+
+# =========================
+# Images
+# =========================
+*.jpeg          binary
+*.jpg           binary
+*.jpe           binary
+*.jfif          binary
+*.png           binary
+*.gif           binary
+*.bmp           binary
+*.tiff          binary
+*.tif           binary
+*.webp          binary
+*.ico           binary
+*.svg           text eol=lf
+*.eps           binary
+
+# =========================
+# Fonts
+# =========================
+*.ttf           binary
+*.otf           binary
+*.woff          binary
+*.woff2         binary
+*.eot           binary
+
+# =========================
+# Archives
+# =========================
+*.zip           binary
+*.tar           binary
+*.tar.gz        binary
+*.rar           binary
+*.7z            binary
+
+# =========================
+# Video / Audio
+# =========================
+*.mp4           binary
+*.mov           binary
+*.avi           binary
+*.mkv           binary
+*.flv           binary
+*.mp3           binary
+*.wav           binary
+*.m4a           binary
+*.aac           binary
+
+# =========================
+# Executables & Libraries
+# =========================
+*.exe           binary
+*.dll           binary
+*.so            binary
+*.dylib         binary
+*.jar           binary
+*.class         binary
+
+# =========================
+# Database & Data
+# =========================
+*.db            binary
+*.sqlite        binary
+*.sqlite3       binary
+*.pkl           binary
+*.pickle        binary
+*.h5            binary
+*.pb            binary
+
+# =========================
+# Compiler / Generated
+# =========================
+*.o             binary
+*.a             binary
+*.lib           binary
+*.obj           binary
+*.pyc           binary
+*.pyo           binary
 
 # =========================
 # Binary Files

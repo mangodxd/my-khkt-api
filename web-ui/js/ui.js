@@ -42,11 +42,11 @@ export function updateClock() {
 export function setWsStatus(connected) {
   if (connected) {
     // Khi có mạng: Thông báo sẵn sàng
-    setCamStatus('Hệ thống sẵn sàng', 'ok');
+    setCamStatus('ONLINE', 'ok');
     DOM.checkinBtn.disabled = false;
   } else {
     // Khi mất mạng: Thông báo đang kết nối lại (thay vì Mất kết nối nghe rất nặng nề)
-    setCamStatus('Đang kết nối...', 'warn');
+    setCamStatus('OFFLINE', 'error');
     DOM.checkinBtn.disabled = true;
   }
 }
@@ -58,20 +58,29 @@ export function setCamStatus(text, cls = '') {
 
 // ── Camera / thumbnails ──────────────────────
 const fixB64 = (s) =>
-  !s ? '' : s.startsWith('data:image') ? s : 'data:image/jpeg;base64,' + s;
+  !s ? '' : s.startsWith('data:image') ? s : 'data:image/webp;base64,' + s;
 
 export function updateCameraView(images, mainImg) {
-  const imgs = Array.isArray(images) && images.length ? images : (mainImg ? [mainImg] : []);
+  // Use images array if provided, otherwise fall back to mainImg
+  let imgs = [];
+  
+  if (Array.isArray(images) && images.length > 0) {
+    imgs = images;
+  } else if (mainImg) {
+    imgs = [mainImg];
+  }
+  
   if (!imgs.length) return;
 
   // Show last frame as main
   DOM.camFrame.src = fixB64(imgs[imgs.length - 1]);
 
-  // Thumbnails
+  // Thumbnails with selection capability
   DOM.thumbStrip.innerHTML = '';
   imgs.forEach((src, i) => {
     const img = document.createElement('img');
     img.src = fixB64(src);
+    img.title = `Frame ${i + 1}/${imgs.length}`;
     if (i === imgs.length - 1) img.classList.add('active');
     img.onclick = () => {
       DOM.camFrame.src = img.src;

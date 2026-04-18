@@ -43,7 +43,7 @@ UI.DOM.checkinBtn.onclick = async () => {
   try {
     const res = await fetchApi('/api/command/trigger_checkin', { method: 'POST' });
     if (!res.success) throw new Error(res.message || 'Lỗi kích hoạt');
-    UI.setCamStatus('Đang quét AI...', '');
+    UI.setCamStatus('LOADING...', '');
   } catch (e) {
     UI.setCheckinProcessing(false);
     UI.toast(`Lỗi: ${e.message}`, 'error');
@@ -87,7 +87,8 @@ function scheduleReconnect() {
 function handleWsMessage(msg) {
   if (msg.type === 'attendance_update') {
     const att = msg.payload;
-    UI.updateCameraView(att.images, att.image);
+    // Pass images array and mainImg for backward compatibility
+    UI.updateCameraView(att.images || [], att.image);
     UI.updateAttendanceData(att.present_names, att.absent_names, att.last_update);
     UI.setCheckinProcessing(false);
     UI.toast(`Điểm danh xong — ${(att.present_names||[]).length}/${(att.present_names||[]).length + (att.absent_names||[]).length} có mặt`, 'success');
@@ -108,7 +109,8 @@ connectWS();
       if (latest.success && latest.data) {
         const d = latest.data;
         UI.updateAttendanceData(d.present_names, d.absent_names, d.created_at);
-        if (d.images?.[0]) UI.updateCameraView([], d.images[0].image_data);
+        // Pass all images array for multi-frame display
+        UI.updateCameraView(d.images || [], null);
       }
     }
   } catch { /* non-critical */ }

@@ -294,15 +294,16 @@ function getLatestSession() {
         const absentResult = db.exec('SELECT student_name FROM session_absent WHERE session_id = ?', [session.id]);
         const absentNames = absentResult.length > 0 ? absentResult[0].values.map(v => v[0]) : [];
         
-        // Get primary image
-        const imageResult = db.exec('SELECT image_data FROM session_images WHERE session_id = ? AND is_primary = 1 LIMIT 1', [session.id]);
-        const image = imageResult.length > 0 && imageResult[0].values.length > 0 ? imageResult[0].values[0][0] : null;
+        // Get all images (ordered by is_primary DESC, so primary image comes first)
+        const imagesResult = db.exec('SELECT image_data FROM session_images WHERE session_id = ? ORDER BY is_primary DESC, id ASC', [session.id]);
+        const images = imagesResult.length > 0 ? imagesResult[0].values.map(v => v[0]) : [];
         
         return {
             ...session,
             present_names: presentNames,
             absent_names: absentNames,
-            image: image
+            images: images,
+            image: images.length > 0 ? images[0] : null  // Backward compatibility
         };
     } catch (error) {
         console.error('[Database] getLatestSession error:', error);

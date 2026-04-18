@@ -44,12 +44,12 @@ router.get('/', tryCatch(async (req, res) => {
  * @param {number} req.body.total - Total students
  * @param {Array} req.body.present_names - Names of present students
  * @param {Array} req.body.absent_names - Names of absent students
- * @param {string} req.body.image - Optional base64 image
+ * @param {Array} req.body.images - Array of base64 images
  * @param {Object} res - Express response
  * @returns {Object} Success status and session ID
  */
 router.post('/', tryCatch(async (req, res) => {
-    const { source = 'auto', total = 0, present_names = [], absent_names = [], image } = req.body;
+    const { source = 'auto', total = 0, present_names = [], absent_names = [], images = [] } = req.body;
 
     const presentCount = present_names.length;
     const absentCount = absent_names.length;
@@ -62,10 +62,13 @@ router.post('/', tryCatch(async (req, res) => {
     present_names.forEach(name => db.addSessionPresent(sessionId, name));
     absent_names.forEach(name => db.addSessionAbsent(sessionId, name));
 
-    // Save primary image if provided
-    if (image) {
-        db.addSessionImage(sessionId, image, 1);
-    }
+    // Save all images (first image as primary, rest as secondary)
+    images.forEach((imgData, idx) => {
+        if (imgData) {
+            db.addSessionImage(sessionId, imgData, idx === 0 ? 1 : 0);
+        }
+    });
+    console.log(`[Attendance] Saved ${images.length} images for session ${sessionId}`);
 
     // Prepare data for broadcast
     currentAttendanceCache = {
@@ -76,7 +79,8 @@ router.post('/', tryCatch(async (req, res) => {
         absent_count: absentCount,
         present_names,
         absent_names,
-        image: image || null,
+        images: images || [],
+        image: images.length > 0 ? images[0] : null,  // Keep for backward compatibility
         created_at: new Date().toISOString()
     };
     broadcastToUI('attendance_update', currentAttendanceCache);

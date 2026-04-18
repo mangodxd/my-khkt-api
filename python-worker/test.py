@@ -18,5 +18,5 @@ def register_faces(dataset_path: str):
 if __name__ == '__main__':
     # Đặt hình ảnh các bạn học sinh vào thư mục data/dataset/
     # VD: data/dataset/Nguyen_Van_A.jpg
-    DATASET_DIR = "data/dataset"
+    DATASET_DIR = "data/faces"
     register_faces(DATASET_DIR)
