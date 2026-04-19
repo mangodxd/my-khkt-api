@@ -1,59 +1,95 @@
+# ═════════════════════════════════════════════════════════════
+# SMART MUSTER CAMERA - Production .gitignore
+# ═════════════════════════════════════════════════════════════
+
 # =========================
-# Logs
+# OS & Editor Files
 # =========================
-logs
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+.idea/
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+*.iml
+*.ipr
+*.iws
+
+# =========================
+# Logs & Crash Dumps
+# =========================
+logs/
 *.log
+*.log.*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 pip-log.txt
 pip-delete-this-directory.txt
+hs_err_pid*.log
+crash*.log
 
 # =========================
-# Runtime data
+# Runtime & Process Data
 # =========================
-pids
+pids/
 *.pid
-*.seed
 *.pid.lock
+*.seed
+.runtimeconfig.json
 
 # =========================
 # Coverage & Testing
 # =========================
-coverage
-*.lcov
-.nyc_output
+coverage/
 .coverage
+.coverage.*
 htmlcov/
+.nyc_output/
+*.lcov
 .pytest_cache/
-*.cover
+test_results/
+coverage.xml
+.hypothesis/
 
 # =========================
-# Grunt intermediate storage
-# =========================
-.grunt
-
-# =========================
-# Dependency directories
+# Node.js (API Gateway)
 # =========================
 node_modules/
 jspm_packages/
 bower_components/
+package-lock.json
+yarn.lock
+.npm/
+.eslintcache
 
-# Python
+# =========================
+# Python (Python Worker)
+# =========================
 venv/
-ENV/
 env/
+ENV/
 .venv
+.Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python
+.so
+*.egg-info/
+dist/
 build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
@@ -63,41 +99,106 @@ parts/
 sdist/
 var/
 wheels/
-*.egg-info/
-.installed.cfg
+pip-wheel-metadata/
+share/python-wheels/
 *.egg
 MANIFEST
+.installed.cfg
 
 # =========================
-# TypeScript
+# Flutter/Dart (App)
 # =========================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+pubspec.lock
+flutter_release_build/
+app/build/
+
+# =========================
+# Cache & Compilation
+# =========================
+.cache/
+.gradle/
+.rpt2_cache/
+.rts2_cache_*/
+.node_repl_history
 *.tsbuildinfo
 typings/
 
 # =========================
-# Cache directories
-# =========================
-.npm
-.eslintcache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-.node_repl_history
-.cache/
-
-# =========================
-# Environment variables
+# Sensitive Data & Secrets
 # =========================
 .env
 .env.local
 .env.*.local
+.env.production.local
 .env.development.local
 .env.test.local
-.env.production.local
-.env.development
 .env.test
+.env.development
 .env.production
+.env.*
+config/secrets*.json
+config/private*.json
+*.pem
+*.key
+*.cert
+*.pfx
+secrets.json
+
+# =========================
+# Build & Generated Files
+# =========================
+dist/
+build/
+out/
+*.o
+*.a
+*.lib
+.DS_Store
+.vscode-test
+.history
+*.vsix
+GeneratedPluginRegistrant.java
+GeneratedPluginRegistrant.swift
+
+# =========================
+# IDE-Specific
+# =========================
+.classpath
+.c9/
+*.launch
+.scala_dependencies
+.metals/
+.bloop/
+.scalajs-bundler/
+
+# =========================
+# Python Data & Models
+# =========================
+python-worker/data/faces/*
+!python-worker/data/faces/.gitkeep
+python-worker/data/embeddings.pkl
+*.pkl
+*.pickle
+*.joblib
+
+# =========================
+# Local Testing & Temp
+# =========================
+*.tmp
+*.temp
+temp/
+tmp/
+test_output/
+debug/
+.run/
+run.bat.log
+.fusebox/
 
 # =========================
 # Build outputs

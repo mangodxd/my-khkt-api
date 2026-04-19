@@ -2,6 +2,7 @@
 
 import cv2
 import time
+import gc
 from src.utils import FancyText
 import threading
 
@@ -59,14 +60,34 @@ class StreamCapture():
 
     def _update(self):
         """Background thread that continuously reads frames."""
+        frame_count = 0
+        skip_frames = 2  # Process every 3rd frame to reduce memory pressure
+        
         while self.is_running:
             if self.cap and self.cap.isOpened():
-                ret, frame = self.cap.read()
-                if ret:
-                    with self.lock:
-                        self.frame = frame
-                else:
-                    time.sleep(0.1)
+                try:
+                    ret, frame = self.cap.read()
+                    if ret:
+                        frame_count += 1
+                        # Skip frames to reduce memory pressure
+                        if frame_count % (skip_frames + 1) == 0:
+                            # Resize to reduce memory footprint (~50% smaller)
+                            if frame is not None:
+                                resized = cv2.resize(frame, (960, 540), interpolation=cv2.INTER_LINEAR)
+                                with self.lock:
+                                    self.frame = resized
+                                del resized
+                            del frame
+                        else:
+                            del frame
+                        # Periodic garbage collection
+                        if frame_count % 30 == 0:
+                            gc.collect()
+                    else:
+                        time.sleep(0.1)
+                except Exception as e:
+                    FancyText.error(f'Frame read error: {str(e)[:100]}')
+                    time.sleep(0.2)
             else:
                 self._reconnect()
                 time.sleep(self.reconnectDelay)

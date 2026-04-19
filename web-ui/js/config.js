@@ -53,7 +53,7 @@ function renderTags() {
   tagsWrap.innerHTML = cfg.image_capture_interval.map((t, i) => `
     <div class="time-tag">
       <span>${t}</span>
-      <button type="button" data-i="${i}" title="Delete">×</button>
+      <button type="button" data-i="${i}" title="Xóa">×</button>
     </div>
   `).join('');
   tagsWrap.querySelectorAll('button[data-i]').forEach(btn => {

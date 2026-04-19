@@ -31,6 +31,39 @@ router.post('/trigger_checkin', tryCatch(async (req, res) => {
 }));
 
 /**
+ * POST /api/command/add_student
+ * 
+ * Adds a new student by sending their name and photo to the Python worker.
+ * The image should be a base64 encoded string.
+ * 
+ * @async
+ * @param {Object} req - Express request
+ * @param {string} req.body.name - Student's name
+ * @param {string} req.body.image - Base64 encoded image
+ * @param {Object} res - Express response
+ * @returns {Object} Success status and message
+ */
+router.post('/add_student', tryCatch(async (req, res) => {
+    const { name, image } = req.body;
+
+    if (!name || !image) {
+        return res.status(400).json({ success: false, message: "Name and image are required." });
+    }
+
+    // The image from the client might have a data URL prefix (e.g., "data:image/jpeg;base64,").
+    // We need to remove it before sending it to the worker.
+    const base64Image = image.split(';base64,').pop();
+
+    const payload = { name, image: base64Image };
+    
+    console.log(`[Command] Add student '${name}' command sent to worker`);
+    broadcastToWorker('add_student', payload);
+    
+    return res.json({ success: true, message: "Add student command sent to camera worker." });
+}));
+
+
+/**
  * POST /api/command/ack
  * 
  * Receives acknowledgment from Python worker after processing a command.

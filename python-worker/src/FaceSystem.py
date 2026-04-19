@@ -1,4 +1,3 @@
-
 """Face recognition system using InsightFace."""
 
 from insightface.app import FaceAnalysis
@@ -151,6 +150,39 @@ class FaceSystem():
             f'Updated embeddings for {count} images/people '
             f'(total {len(self.known_faces)} people, {total_embeddings} embeddings)'
         )
+
+    def register_face_from_image(self, personName: str, image_data: np.ndarray) -> bool:
+        """
+        Register a single face from an image buffer.
+        
+        Args:
+            personName (str): Name of the person in the image.
+            image_data (np.ndarray): Image data in a numpy array.
+            
+        Returns:
+            bool: True if embedding was extracted and saved successfully.
+        """
+        results = self.detectFace(image_data)
+        if not results:
+            FancyText.warning(f'No face detected for: {personName}')
+            return False
+        
+        embedding = results[0]['embedding']
+        
+        if personName not in self.known_faces:
+            self.known_faces[personName] = []
+        
+        self.known_faces[personName].append(embedding)
+        FancyText.success(f'Generated embedding for {personName}')
+        
+        self._save_embeddings()
+        self._rebuild_cache()
+        
+        total_embeddings = sum(len(v) for v in self.known_faces.values())
+        FancyText.success(
+            f'Updated embeddings. Total {len(self.known_faces)} people, {total_embeddings} embeddings.'
+        )
+        return True
 
     def recognize(self, faceEmb: np.ndarray) -> tuple[str, float]:
         """

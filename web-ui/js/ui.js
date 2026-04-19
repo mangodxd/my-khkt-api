@@ -80,7 +80,7 @@ export function updateCameraView(images, mainImg) {
   imgs.forEach((src, i) => {
     const img = document.createElement('img');
     img.src = fixB64(src);
-    img.title = `Frame ${i + 1}/${imgs.length}`;
+    img.title = `Khung ${i + 1}/${imgs.length}`;
     if (i === imgs.length - 1) img.classList.add('active');
     img.onclick = () => {
       DOM.camFrame.src = img.src;

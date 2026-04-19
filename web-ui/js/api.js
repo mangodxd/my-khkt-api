@@ -69,6 +69,38 @@ export async function fetchApi(path, options = {}) {
 }
 
 /**
+ * API methods
+ */
+export const api = {
+    login: (username, password) => fetchApi('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ username, password }),
+    }),
+    
+    getAttendance: (date) => fetchApi(`/api/attendance?date=${date}`),
+    
+    getHistory: (offset = 0, limit = 20) => fetchApi(`/api/attendance/history?offset=${offset}&limit=${limit}`),
+    
+    getHistoryDetail: (id) => fetchApi(`/api/attendance/detail/${id}`),
+
+    getConfig: () => fetchApi('/api/config'),
+
+    updateConfig: (config) => fetchApi('/api/config', {
+        method: 'POST',
+        body: JSON.stringify(config),
+    }),
+
+    triggerCheckin: () => fetchApi('/api/command/trigger_checkin', {
+        method: 'POST',
+    }),
+
+    addStudent: (name, image) => fetchApi('/api/command/add_student', {
+        method: 'POST',
+        body: JSON.stringify({ name, image }),
+    }),
+};
+
+/**
  * Get WebSocket URL for real-time communication.
  * 
  * @returns {string} WebSocket URL with UI client type

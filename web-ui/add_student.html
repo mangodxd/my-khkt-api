@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Học Sinh - SMART MUSTER CAMERA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-shell">
+    <nav class="nav">
+        <div class="nav-left"></div>
+        <div class="nav-center brand-hero">
+            <strong>THÊM HỌC SINH</strong>
+        </div>
+        <div class="nav-right">
+            <a href="index.html" class="logout-btn">← Quay lại</a>
+        </div>
+    </nav>
+
+    <div class="add-student-wrapper">
+        <div class="add-student-content">
+            <div class="form-container">
+                <div class="form-section">
+                    <h2 class="add-student-title">Thêm Học Sinh Mới</h2>
+                    <p class="add-student-desc">Vui lòng chụp ảnh khuôn mặt và nhập tên học sinh</p>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">Chụp Ảnh Khuôn Mặt</div>
+                    <div class="camera-capture">
+                        <video id="video" class="capture-video" autoplay playsinline></video>
+                        <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+                        <div id="preview" class="capture-preview" style="display: none;">
+                            <img id="previewImg" class="preview-img">
+                        </div>
+                    </div>
+                    <button id="capture" class="btn btn-primary btn-full">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                            <circle cx="12" cy="13" r="4"/>
+                        </svg>
+                        <span id="captureText">Chụp Ảnh</span>
+                    </button>
+                </div>
+
+                <div class="form-section">
+                    <div class="input-group">
+                        <label for="name">Tên Học Sinh</label>
+                        <input type="text" id="name" placeholder="Nhập tên học sinh" maxlength="100">
+                        <div id="nameError" class="input-error" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button id="reset" class="btn btn-secondary" style="flex: 1; display: none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"/>
+                            <path d="M20.49 15a9 9 0 1 1-2-8.83"/>
+                        </svg>
+                        <span>Xóa</span>
+                    </button>
+                    <button id="submit" class="btn btn-primary btn-full" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        <span>Thêm Học Sinh</span>
+                    </button>
+                </div>
+
+                <div id="status" class="status-message" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toastArea"></div>
+
+<script type="module">
+    import { api } from './js/api.js';
+    import * as AddStudent from './js/add_student_prod.js';
+    AddStudent.init(api);
+</script>
+</body>
+</html>
