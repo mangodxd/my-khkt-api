@@ -81,7 +81,7 @@ export const api = {
     
     getHistory: (offset = 0, limit = 20) => fetchApi(`/api/attendance/history?offset=${offset}&limit=${limit}`),
     
-    getHistoryDetail: (id) => fetchApi(`/api/attendance/detail/${id}`),
+    getHistoryDetail: (id) => fetchApi(`/api/attendance/history/${id}`),
 
     getConfig: () => fetchApi('/api/config'),
 

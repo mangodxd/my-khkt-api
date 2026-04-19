@@ -39,11 +39,16 @@ class StreamCapture():
     def _connect(self):
         """Establish RTSP connection."""
         self.cap = cv2.VideoCapture(self.url, cv2.CAP_FFMPEG)
+        
+        # Limit the buffer size to reduce memory consumption
+        self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+        
         if not self.cap.isOpened():
             FancyText.error('Unable to connect to RTSP. Retrying...')
             time.sleep(self.reconnectDelay)
         else:
             FancyText.success('Connected successfully.')
+            # Pre-read a few frames to clear buffer
             for _ in range(3):
                 self.cap.read()
             with self.lock:

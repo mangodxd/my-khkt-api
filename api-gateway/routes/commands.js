@@ -27,7 +27,11 @@ router.post('/trigger_checkin', tryCatch(async (req, res) => {
     console.log('[Command] Trigger check-in command sent to worker');
     broadcastToWorker('trigger_checkin', payload);
     
-    return res.json({ success: true, message: "Check-in command sent to camera worker." });
+    return res.json({ 
+        success: true, 
+        message: "Check-in command sent to camera worker.",
+        data: { command: 'trigger_checkin' }
+    });
 }));
 
 /**
@@ -59,7 +63,11 @@ router.post('/add_student', tryCatch(async (req, res) => {
     console.log(`[Command] Add student '${name}' command sent to worker`);
     broadcastToWorker('add_student', payload);
     
-    return res.json({ success: true, message: "Add student command sent to camera worker." });
+    return res.json({ 
+        success: true, 
+        message: "Add student command sent to camera worker.",
+        data: { command: 'add_student', name }
+    });
 }));
 
 

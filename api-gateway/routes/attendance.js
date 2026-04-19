@@ -29,7 +29,11 @@ let currentAttendanceCache = {};
  */
 router.get('/', tryCatch(async (req, res) => {
     const session = db.getLatestSession();
-    return res.json(session || {});
+    return res.json({ 
+        success: true, 
+        data: session || {},
+        message: session ? "Latest attendance session retrieved." : "No attendance session available."
+    });
 }));
 
 /**
@@ -85,7 +89,11 @@ router.post('/', tryCatch(async (req, res) => {
     };
     broadcastToUI('attendance_update', currentAttendanceCache);
 
-    return res.json({ success: true, attendance_id: sessionId }); 
+    return res.json({ 
+        success: true, 
+        data: currentAttendanceCache,
+        message: "Attendance session recorded successfully."
+    }); 
 }));
 
 /**
@@ -118,7 +126,11 @@ router.post('/upload_image', tryCatch(async (req, res) => {
         broadcastToUI('attendance_update', currentAttendanceCache);
     }
 
-    return res.json({ success: true });
+    return res.json({ 
+        success: true, 
+        data: { attendance_id, image_saved: true },
+        message: "Image saved successfully."
+    });
 }));
 
 /**
